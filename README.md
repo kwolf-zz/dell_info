@@ -29,10 +29,12 @@ Custom facts added, may very based on your warranty details:
 
 The _warranty_ fact should be set to _warranty => true_ if any warranties are greater than the current date, and _warranty => false_ if all warranties have expired.
 
+api.dell.com uses API keys.  When I wrote this there were three publically available on the internet.  This isn't a private key that's currently in the module.  In fact, I couldn't find a way to get a private key.
+
 ##Limitations
 
 * Currently dell_info only supports Linux based operating systems.  We've used it on CentOS, RedHat, Ubuntu and Proxmox (Debian).
-** Would take much to make this work on Windows.  Right now I'm using curl instead of net http. 
+** Wouldn't take much to make this work on Windows.  Right now I'm using curl instead of net http.  Also the cache directory would need to chnage. It's pretty Linux specific right now.
 * Only runs on Dell bare metal servers.
 * Will only query Dell for hardware based servers which have serial numbers Facter can see.
 
@@ -43,12 +45,12 @@ kwolf72@gmail.com
 
 ##Support
 
-Please log tickets and issues at our [dell_info](https://github.com/kwolf/dell_info/issues)
+Please log tickets and issues at the [github repository](https://github.com/kwolf/dell_info/issues)
 
 ##Release notes
 
 ### 0.0.1
 
-Initial release of dell_info.  Works for us at this point.
+* Initial release of dell_info.  Works for us at this point.
 
 
