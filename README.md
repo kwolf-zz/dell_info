@@ -48,7 +48,12 @@ kwolf72@gmail.com
 Please log tickets and issues at the [github repository](https://github.com/kwolf/dell_info/issues)
 
 ##Release notes
+
+### 1.0.1
+* Forgot to increment the version number in the module file.
+
 ### 1.0.0
+
 * Incrementing the release to scare away less People.  This has been working fine for us.
 
 ### 0.0.1
