@@ -1,5 +1,5 @@
 name    'kwolf-dell_info'
-version '0.0.1'
+version '1.0.1'
 source 'UNKNOWN'
 author 'kwolf'
 license 'Apache License, Version 2.0'
