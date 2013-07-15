@@ -31,6 +31,9 @@ The _warranty_ fact should be set to _warranty => true_ if any warranties are gr
 
 api.dell.com uses API keys.  When I wrote this there were three publically available on the internet.  This isn't a private key that's currently in the module.  In fact, I couldn't find a way to get a private key.
 
+Based on this [blog article](http://ocdnix.wordpress.com/2013/02/28/pulling-warranty-details-from-api-dell-com/) about api.dell.com. 
+
+
 ##Limitations
 
 * Currently dell_info only supports Linux based operating systems.  We've used it on CentOS, RedHat, Ubuntu and Proxmox (Debian).
