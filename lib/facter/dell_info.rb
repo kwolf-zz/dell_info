@@ -85,6 +85,7 @@ if Facter.value('serialnumber') && Facter.value('manufacturer').downcase =~ /del
     end
 
     warranties = dell_cache['GetAssetWarrantyResponse']['GetAssetWarrantyResult']['Response']['DellAsset']['Warranties']['Warranty']
+    warranties = [warranties] unless warranties.class == [].class
     covered = false
 
     warranties.each_with_index do |warranty,index|
