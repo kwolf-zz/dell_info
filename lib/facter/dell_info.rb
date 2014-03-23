@@ -69,51 +69,54 @@ if Facter.value('serialnumber') && Facter.value('manufacturer').downcase =~ /del
   end
 
   if defined?(dell_cache)
-    pd = dell_cache['GetAssetWarrantyResponse']['GetAssetWarrantyResult']['Response']['DellAsset']['ShipDate']
-    purchase_date = Date.parse(pd)
-    Facter.add(:purchase_date) do
-      setcode do
-        purchase_date.to_s
-      end
-    end
-
-    age = ((Date.today - purchase_date).to_i / 365.0)
-    Facter.add(:server_age) do
-      setcode do
-        "%.2f years" % [age]
-      end
-    end
-
-    warranties = dell_cache['GetAssetWarrantyResponse']['GetAssetWarrantyResult']['Response']['DellAsset']['Warranties']['Warranty']
-    warranties = [warranties] unless warranties.is_a? Array
-    covered = false
-
-    warranties.each_with_index do |warranty,index|
-      enddate = Date.parse(warranty['EndDate'])
-      covered = (enddate > Date.parse(Time.now.to_s)) if covered == false
-      Facter.add("warranty#{index}_expires") do
+    begin
+      pd = dell_cache['GetAssetWarrantyResponse']['GetAssetWarrantyResult']['Response']['DellAsset']['ShipDate']
+      purchase_date = Date.parse(pd)
+      Facter.add(:purchase_date) do
         setcode do
-          enddate.to_s
+          purchase_date.to_s
         end
       end
 
-      Facter.add("warranty#{index}_type") do
+      age = ((Date.today - purchase_date).to_i / 365.0)
+      Facter.add(:server_age) do
         setcode do
-          warranty['EntitlementType']
+          "%.2f years" % [age]
         end
       end
 
-      Facter.add("warranty#{index}_desc") do
-        setcode do
-          warranty['ServiceLevelDescription']
+      warranties = dell_cache['GetAssetWarrantyResponse']['GetAssetWarrantyResult']['Response']['DellAsset']['Warranties']['Warranty']
+      warranties = [warranties] unless warranties.is_a? Array
+      covered = false
+
+      warranties.each_with_index do |warranty,index|
+        enddate = Date.parse(warranty['EndDate'])
+        covered = (enddate > Date.parse(Time.now.to_s)) if covered == false
+        Facter.add("warranty#{index}_expires") do
+          setcode do
+            enddate.to_s
+          end
+        end
+
+        Facter.add("warranty#{index}_type") do
+          setcode do
+            warranty['EntitlementType']
+          end
+        end
+
+        Facter.add("warranty#{index}_desc") do
+          setcode do
+            warranty['ServiceLevelDescription']
+          end
         end
       end
-    end
 
-    Facter.add(:warranty) do
-      setcode do
-        covered
+      Facter.add(:warranty) do
+        setcode do
+          covered
+        end
       end
+    rescue Exception=>e
     end
   else
     Facter.debug("Error getting response from api.dell.com")
