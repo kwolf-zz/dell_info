@@ -1,6 +1,7 @@
 require 'json'
 require 'date'
 require 'time'
+require 'net/http'
 
 #  URL used to query Dell's API
 url = 'https://api.dell.com/support/v2/assetinfo/warranty/tags.json?apikey=%s&svctags=%s'
@@ -21,7 +22,6 @@ cache_ttl = 604800
 dell_cache = nil
 response = nil
 cache_time = Time.at(0)
-info = nil
 
 if Facter.value('serialnumber') && Facter.value('manufacturer').downcase =~ /dell/ &&
   Facter.value('kernel') == 'Linux'
@@ -47,12 +47,17 @@ if Facter.value('serialnumber') && Facter.value('manufacturer').downcase =~ /del
     begin
       Timeout::timeout(30) {
         Facter.debug('Getting api.dell.com')
-        response = Facter::Util::Resolution.exec("/usr/bin/curl -ks '#{url}'")
+        uri = URI(url)
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+        request = Net::HTTP::Get.new(uri.request_uri)
+        response = http.request(request)
       }
   
       begin
         if defined?(response)
-          dell_cache = JSON.parse(response)
+          dell_cache = JSON.parse(response.body)
           Dir.mkdir(cache_dir) unless File::exists?(cache_dir)
           File.open(cache_file, "w") do |out|
             out.write(JSON.pretty_generate(dell_cache))
