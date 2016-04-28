@@ -26,7 +26,7 @@ if File.exists?(conf_file) then
   if config['force'] then
     dell_machine = true
   end
-  if config['extra_facts'].any? then
+  if config['extra_facts'] then
     config['extra_facts'].each do |fact|
       if Facter.value(fact) =~ /dell/i then
         dell_machine = true
