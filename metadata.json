@@ -1,5 +1,5 @@
 {
-  "name": "kwolf-test",
+  "name": "kwolf-dell_info",
   "version": "1.5.0",
   "author": "kwolf",
   "summary": "Module to pull warranty information from Dell's API.",
@@ -7,7 +7,7 @@
   "source": "https://github.com/kwolf/dell_info",
   "project_page": "https://github.com/kwolf/dell_info",
   "issues_url": "https://github.com/kwolf/dell_info/issues",
-  "tags": ["dell", "warranty"]
+  "tags": ["dell", "warranty"],
   "operatingsystem_support": [
     {
       "operatingsystem":"RedHat",
