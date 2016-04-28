@@ -1,0 +1,8 @@
+---
+api_key: <%= @api_key %>
+force: <%= @force %>
+extra_facts: 
+<%- @extra_facts.each do |fact| -%>
+- <%= fact %>
+<%- end -%>
+

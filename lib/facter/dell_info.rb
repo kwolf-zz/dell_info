@@ -1,13 +1,39 @@
+require 'yaml'
 require 'json'
 require 'date'
 require 'time'
 require 'net/http'
+
+conf_file = '/etc/dell_info.yaml'
+config = Hash.new
 
 #  URL used to query Dell's API
 url = 'https://api.dell.com/support/v2/assetinfo/warranty/tags.json?apikey=%s&svctags=%s'
 
 #  There are only three API keys at this time I think.  
 apikey = '1adecee8a60444738f280aad1cd87d0e'
+dell_machine = false
+
+if  Facter.value('manufacturer') =~ /dell/i then
+  dell_machine = true
+end
+
+if File.exists?(conf_file) then
+  config = YAML.load_file(conf_file)
+  if config['api_key'] then
+    apikey = config['api_key']
+  end
+  if config['force'] then
+    dell_machine = true
+  end
+  if config['extra_facts'].any? then
+    config['extra_facts'].each do |fact|
+      if Facter.value(fact) =~ /dell/i then
+        dell_machine = true
+      end
+    end
+  end
+end
 
 #  Where to store cache files.  This needs to change for windows.
 cache_dir = "/var/cache/facts.d"
@@ -24,7 +50,7 @@ response = nil
 cache_time = Time.at(0)
 
 if Facter.value('manufacturer')
-  if Facter.value('serialnumber') && Facter.value('manufacturer').downcase =~ /dell/ &&
+  if Facter.value('serialnumber') && dell_machine &&
     Facter.value('kernel') == 'Linux'
 
     # Use cache file if it exists.
