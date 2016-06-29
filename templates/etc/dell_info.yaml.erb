@@ -1,8 +1,10 @@
 ---
 api_key: <%= @api_key %>
+api_url: <%= @api_url %>
 force: <%= @force %>
-extra_facts: 
+cache_dir: <%= @cache_dir %>
+cache_ttl: <%= @cache_ttl %>
+extra_facts:
 <%- @extra_facts.each do |fact| -%>
 - <%= fact %>
 <%- end -%>
-
