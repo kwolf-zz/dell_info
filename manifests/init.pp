@@ -9,7 +9,7 @@ class dell_info (
   String            $api_url      = $::dell_info::params::api_url,
   String            $cache_dir    = $::dell_info::params::cache_dir,
   Integer           $cache_ttl    = $::dell_info::params::cache_ttl,
-) {
+  ) inherits ::dell_info::params {
 
   file {'/etc/dell_info.yaml':
     content => template('dell_info/etc/dell_info.yaml.erb'),
