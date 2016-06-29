@@ -84,7 +84,7 @@ if Facter.value('manufacturer')
     #  If no cache file, or cache file is expired, query Dell.
     if !dell_cache || (Time.now - cache_time) > cache_ttl
       #url = url % [apikey, Facter.value('serialnumber')]
-      #begin
+      begin
         Timeout::timeout(30) {
           Facter.debug('Getting api.dell.com')
           request_uri=url
