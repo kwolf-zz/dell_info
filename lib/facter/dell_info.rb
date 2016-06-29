@@ -3,16 +3,25 @@ require 'json'
 require 'date'
 require 'time'
 require 'net/http'
+require 'open-uri'
 
 conf_file = '/etc/dell_info.yaml'
 config = Hash.new
 
 #  URL used to query Dell's API
-url = 'https://api.dell.com/support/v2/assetinfo/warranty/tags.json?apikey=%s&svctags=%s'
+#url = 'https://api.dell.com/support/v2/assetinfo/warranty/tags.json?apikey=%s&svctags=%s'
+url = 'https://api.dell.com/support/v2/assetinfo/warranty/tags.json'
 
-#  There are only three API keys at this time I think.  
+#  There are only three API keys at this time I think.
 apikey = '1adecee8a60444738f280aad1cd87d0e'
 dell_machine = false
+
+#  Where to store cache files.  This needs to change for windows.
+cache_dir = "/var/cache/facts.d"
+
+# Cache TTL = 1 week, in seconds.
+cache_ttl = 604800
+
 
 if  Facter.value('manufacturer') =~ /dell/i then
   dell_machine = true
@@ -23,6 +32,16 @@ if File.exists?(conf_file) then
   if config['api_key'] then
     apikey = config['api_key']
   end
+  if config['api_url'] then
+    url = config['api_url']
+  end
+  if config['cache_dir'] then
+    cache_dir = config['cache_dir']
+  end
+  if config['cache_ttl'] then
+    cache_ttl = config['cache_ttl']
+  end
+
   if config['force'] then
     dell_machine = true
   end
@@ -35,14 +54,8 @@ if File.exists?(conf_file) then
   end
 end
 
-#  Where to store cache files.  This needs to change for windows.
-cache_dir = "/var/cache/facts.d"
-
 #  Name of cache file.  For now, unique file per serial number.
 cache_file = "#{cache_dir}/#{Facter.value('serialnumber')}.json"
-
-# Cache TTL = 1 week, in seconds.
-cache_ttl = 604800 
 
 
 dell_cache = nil
@@ -70,21 +83,26 @@ if Facter.value('manufacturer')
 
     #  If no cache file, or cache file is expired, query Dell.
     if !dell_cache || (Time.now - cache_time) > cache_ttl
-      url = url % [apikey, Facter.value('serialnumber')]
-      begin
+      #url = url % [apikey, Facter.value('serialnumber')]
+      #begin
         Timeout::timeout(30) {
           Facter.debug('Getting api.dell.com')
-          uri = URI(url)
-          http = Net::HTTP.new(uri.host, uri.port)
-          http.use_ssl = true
-          http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-          request = Net::HTTP::Get.new(uri.request_uri)
-          response = http.request(request)
+          request_uri=url
+          svctag=Facter.value('serialnumber')
+          request_query="?svctags=#{svctag}"
+          url = "#{request_uri}#{request_query}"
+          response=open(url,"apikey" => "#{apikey}").read
+          #uri = URI(url)
+          #http = Net::HTTP.new(uri.host, uri.port)
+          #http.use_ssl = true
+          #http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+          #request = Net::HTTP::Get.new(uri.request_uri)
+          #response = http.request(request)
         }
-    
+
         begin
           if defined?(response)
-            dell_cache = JSON.parse(response.body)
+            dell_cache = JSON.parse(response)
             Dir.mkdir(cache_dir) unless File::exists?(cache_dir)
             File.open(cache_file, "w") do |out|
               out.write(JSON.pretty_generate(dell_cache))
