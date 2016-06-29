@@ -3,7 +3,7 @@
 # api_key = the api key to use when quering dell
 # extra_facts = list of additional facts to identify dell servers
 class dell_info (
-  Optional[String]  $apikey       = $::dell_info::params::apikey,
+  Optional[String]  $api_key       = $::dell_info::params::api_key,
   Boolean           $force        = $::dell_info::params::force,
   Array             $extra_facts  = $::dell_info::params::extra_facts,
   String            $api_url      = $::dell_info::params::api_url,
