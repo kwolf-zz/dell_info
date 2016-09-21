@@ -10,7 +10,7 @@ config = Hash.new
 #  URL used to query Dell's API
 # For testing purpose I use sandbox but in production, this should be changed
 url = 'https://api.dell.com/support/assetinfo/v4/getassetwarranty/%s?apikey=%s'
-
+use_sandbox = false
 # This dummy key might not work
 apikey = '1adecee8a60444738f280aad1cd87d0e'
 dell_machine = false
@@ -27,9 +27,7 @@ if File.exists?(conf_file) then
   if config['force'] then
     dell_machine = true
   end
-  if config['sandbox'] then
-    uri.host = 'sandbox.'+uri.host
-  end
+  use_sandbox = config['sandbox']
   if config['extra_facts'] then
     config['extra_facts'].each do |fact|
       if Facter.value(fact) =~ /dell/i then
@@ -79,7 +77,10 @@ if Facter.value('manufacturer')
         Timeout::timeout(30) {
           Facter.debug('Getting api.dell.com')
           uri = URI(url)
+          uri.host = 'sandbox.'+uri.host if use_sandbox
+          Facter.debug(uri.host)
           http = Net::HTTP.new(uri.host, uri.port)
+          Facter.debug(uri.host)
           http.use_ssl = true
           request = Net::HTTP::Get.new(uri.request_uri)
           response = http.request(request)
