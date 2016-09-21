@@ -9,7 +9,7 @@ config = Hash.new
 
 #  URL used to query Dell's API
 # For testing purpose I use sandbox but in production, this should be changed
-url = 'https://sandbox.api.dell.com/support/assetinfo/v4/getassetheader/%s?apikey=%s'
+url = 'https://sandbox.api.dell.com/support/assetinfo/v4/getassetwarranty/%s?apikey=%s'
 
 # This dummy key might not work
 apikey = '1adecee8a60444738f280aad1cd87d0e'
