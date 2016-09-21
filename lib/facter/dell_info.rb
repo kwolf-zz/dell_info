@@ -9,7 +9,7 @@ config = Hash.new
 
 #  URL used to query Dell's API
 # For testing purpose I use sandbox but in production, this should be changed
-url = 'https://sandbox.api.dell.com/support/assetinfo/v4/getassetwarranty/%s?apikey=%s'
+url = 'https://api.dell.com/support/assetinfo/v4/getassetwarranty/%s?apikey=%s'
 
 # This dummy key might not work
 apikey = '1adecee8a60444738f280aad1cd87d0e'
@@ -26,6 +26,9 @@ if File.exists?(conf_file) then
   end
   if config['force'] then
     dell_machine = true
+  end
+  if config['sandbox'] then
+    uri.host = 'sandbox.'+uri.host
   end
   if config['extra_facts'] then
     config['extra_facts'].each do |fact|
