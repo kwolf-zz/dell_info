@@ -41,6 +41,12 @@ class{'dell_info':
    api_key => "abcde1234"
 }
 ```
+or in hiera :
+
+```
+dell_info::sandbox: true
+dell_info::api_key: "abcde1234"
+```
 
 ##Limitations
 
