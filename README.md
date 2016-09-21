@@ -2,11 +2,11 @@
 
 ##Overview
 
-This puppet module adds custom facts aquired by querying https://api.dell.com/.
+This puppet module adds custom facts aquired by querying https://api.dell.com/. It supports the v4 API.
 
 ##Module Description
 
-We use this to track the age of our mission critical production servers. 
+We use this to track the age of our mission critical production servers.
 
 Facts are cached for seven days by default.
 
@@ -29,10 +29,18 @@ Custom facts added, may very based on your warranty details:
 
 The _warranty_ fact should be set to _warranty => true_ if any warranties are greater than the current date, and _warranty => false_ if all warranties have expired.
 
-api.dell.com uses API keys.  When I wrote this there were three publically available on the internet.  This isn't a private key that's currently in the module.  In fact, I couldn't find a way to get a private key.
+api.dell.com uses API keys. To get one for your use, follow [Dell's instructions](http://en.community.dell.com/dell-groups/supportapisgroup/).
 
-Based on this [blog article](http://ocdnix.wordpress.com/2013/02/28/pulling-warranty-details-from-api-dell-com/) about api.dell.com. 
+Your API key will first only work on Dell's sandbox api server. You should ask your contact to promote it in their production API.
 
+You can test your key with the sandbox API using the parameter :
+
+```
+class{'dell_info': 
+   sandbox => true,
+   api_key => "abcde1234"
+}
+```
 
 ##Limitations
 
@@ -46,11 +54,19 @@ Based on this [blog article](http://ocdnix.wordpress.com/2013/02/28/pulling-warr
 Kevin Wolf
 kwolf72@gmail.com
 
+V4 and sandbox support : 
+
+Jonathan Schaeffer
+jonathan.schaeffer@univ-brest.fr
+
 ##Support
 
 Please log tickets and issues at the [github repository](https://github.com/kwolf/dell_info/issues)
 
 ##Release notes
+
+### 4.0.0
+* Switching to v4 API, sticking major version to the API version
 
 ### 1.0.1
 * Forgot to increment the version number in the module file.
