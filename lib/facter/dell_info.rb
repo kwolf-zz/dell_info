@@ -8,9 +8,10 @@ conf_file = '/etc/dell_info.yaml'
 config = Hash.new
 
 #  URL used to query Dell's API
-url = 'https://api.dell.com/support/v2/assetinfo/warranty/tags.json?apikey=%s&svctags=%s'
+# For testing purpose I use sandbox but in production, this should be changed
+url = 'https://sandbox.api.dell.com/support/assetinfo/v4/getassetheader/%s?apikey=%s'
 
-#  There are only three API keys at this time I think.  
+# This dummy key might not work
 apikey = '1adecee8a60444738f280aad1cd87d0e'
 dell_machine = false
 
@@ -70,14 +71,13 @@ if Facter.value('manufacturer')
 
     #  If no cache file, or cache file is expired, query Dell.
     if !dell_cache || (Time.now - cache_time) > cache_ttl
-      url = url % [apikey, Facter.value('serialnumber')]
+      url = url % [Facter.value('serialnumber'), apikey]
       begin
         Timeout::timeout(30) {
           Facter.debug('Getting api.dell.com')
           uri = URI(url)
           http = Net::HTTP.new(uri.host, uri.port)
           http.use_ssl = true
-          http.verify_mode = OpenSSL::SSL::VERIFY_PEER
           request = Net::HTTP::Get.new(uri.request_uri)
           response = http.request(request)
         }
@@ -102,7 +102,7 @@ if Facter.value('manufacturer')
 
     if defined?(dell_cache)
       begin
-        pd = dell_cache['GetAssetWarrantyResponse']['GetAssetWarrantyResult']['Response']['DellAsset']['ShipDate']
+        pd = dell_cache['AssetWarrantyResponse'][0]['AssetHeaderData']['ShipDate']
         purchase_date = Date.parse(pd)
         Facter.add(:purchase_date) do
           setcode do
@@ -117,7 +117,7 @@ if Facter.value('manufacturer')
           end
         end
 
-        warranties = dell_cache['GetAssetWarrantyResponse']['GetAssetWarrantyResult']['Response']['DellAsset']['Warranties']['Warranty']
+        warranties = dell_cache['AssetWarrantyResponse'][0]['AssetEntitlementData']
         warranties = [warranties] unless warranties.is_a? Array
         covered = false
 
