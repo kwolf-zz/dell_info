@@ -1,6 +1,6 @@
 {
   "name": "kwolf-dell_info",
-  "version": "1.5.1",
+  "version": "4.1.0",
   "author": "kwolf",
   "summary": "Module to pull warranty information from Dell's API.",
   "license": "Apache 2.0",
@@ -15,7 +15,11 @@
     },
     {
       "operatingsystem": "Ubuntu",
-      "operatingsystemrelease": [ "12.04", "10.04" ]
+        "operatingsystemrelease": [ "12.04", "10.04", "14.04", "16.04" ]
+    },
+    {
+      "operatingsystem": "Debian",
+        "operatingsystemrelease": [ "7", "8", "9" ]
     }
   ],
   "dependencies": [
