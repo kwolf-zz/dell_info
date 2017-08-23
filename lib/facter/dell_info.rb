@@ -125,9 +125,12 @@ if Facter.value('manufacturer')
         warranties = [warranties] unless warranties.is_a? Array
         covered = false
 
+        warranty_end = Date.new(1970)
         warranties.each_with_index do |warranty,index|
           enddate = Date.parse(warranty['EndDate'])
           covered = (enddate > Date.parse(Time.now.to_s)) if covered == false
+          warranty_end = enddate unless warranty_end > enddate
+          
           Facter.add("warranty#{index}_expires") do
             setcode do
               enddate.to_s
@@ -150,6 +153,11 @@ if Facter.value('manufacturer')
         Facter.add(:warranty) do
           setcode do
             covered
+          end
+        end
+        Facter.add(:warranty_end) do
+          setcode do
+            warranty_end
           end
         end
       rescue Exception=>e
